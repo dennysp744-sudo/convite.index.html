@@ -108,12 +108,28 @@ function playSound(audioEl){try{audioEl.currentTime=0;audioEl.play().catch(()=>{
 
 function startGame(){
   startScreen.style.display='none';
-  character.style.bottom=charBottom+'px';
-  character.style.left='40px';
-  score=0;
-  currentPhase=1;
-  items=[]; obstacles=[]; doors=[];
-  gameStage.innerHTML=''; gameStage.appendChild(character);
+  finalCard.style.display='none';
+  transition.classList.remove('show');
+
+  // Reseta personagem
+  charBottom = 40;
+  character.style.bottom = charBottom + 'px';
+  character.style.left = '40px';
+
+  // Limpa somente obstáculos, itens e portas do gameStage
+  const elementsToRemove = Array.from(gameStage.children).filter(el => el !== character && el !== transition);
+  elementsToRemove.forEach(el => el.remove());
+
+  score = 0;
+  currentPhase = 1;
+  items = [];
+  obstacles = [];
+  doors = [];
+
+  // Adiciona o personagem ao gameStage se não estiver
+  if (!gameStage.contains(character)) gameStage.appendChild(character);
+
+  // Inicia a primeira fase
   startPhase1();
 }
 
@@ -301,4 +317,6 @@ function restartPhase1(){clearInterval(gameInterval);clearInterval(obstacleInter
 </script>
 </body>
 </html>
+
+
 
