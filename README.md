@@ -16,8 +16,8 @@ body,html{margin:0;padding:0;height:100%;font-family:'Press Start 2P', monospace
 .wrap{display:flex;justify-content:center;align-items:center;width:100%;height:100%;}
 .game{position:relative;width:100%;max-width:var(--maxw);background:#0a0a0a;border:4px solid var(--accent);border-radius:12px;padding:16px;overflow:hidden;}
 h1,h2,p{margin:0;text-align:center;}
-h1{font-size:14px;color:var(--accent);}
-p{font-size:9px;color:#bbb;line-height:1.3;}
+h1{font-size:0.9rem;color:var(--accent);}
+p{font-size:0.7rem;color:#bbb;line-height:1.3;}
 
 .start-screen, .final-card, .transition{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:30;}
 .start-screen{background:rgba(0,0,0,0.85);}
@@ -26,18 +26,22 @@ p{font-size:9px;color:#bbb;line-height:1.3;}
 .transition.show{animation:flash 0.4s ease forwards;}
 @keyframes flash{0%{opacity:1;}100%{opacity:0;}}
 
-.btn{background:var(--accent);color:#000;border:none;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:10px;margin-top:12px;}
+.btn{background:var(--accent);color:#000;border:none;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:0.7rem;margin-top:12px;}
 .btn:active{transform:translateY(1px);}
 #gameStage{position:relative;width:100%;height:380px;overflow:hidden;}
-#character{position:absolute;width:32px;height:32px;bottom:40px;left:40px;transition:transform .1s linear;}
+#character{position:absolute;width:32px;height:32px;bottom:40px;left:40px;
+           background-image: url('https://cdn-icons-png.flaticon.com/512/616/616408.png');
+           background-size: cover;
+           background-position: center;
+           transition:transform .1s linear;}
 .obstacle{position:absolute;width:24px;height:24px;background:#ff6b6b;bottom:40px;animation:moveLeft linear infinite;}
 .item{position:absolute;width:24px;height:24px;bottom:40px;background-size:cover;}
 .particle{position:absolute;width:6px;height:6px;background:#ffd24d;border-radius:50%;pointer-events:none;animation:particleAnim 0.6s forwards;}
 @keyframes particleAnim{0%{opacity:1;transform:translate(0,0);}100%{opacity:0;transform:translate(var(--x),var(--y));}}
 
-.accept-btn,.restart-btn{background:#ff6b6b;color:#fff;border:none;padding:10px 14px;border-radius:10px;cursor:pointer;margin-top:10px;font-size:12px;}
+.accept-btn,.restart-btn{background:#ff6b6b;color:#fff;border:none;padding:10px 14px;border-radius:10px;cursor:pointer;margin-top:10px;font-size:0.8rem;}
 .restart-btn{background:#00bcd4;}
-.volume-container{display:flex;justify-content:center;align-items:center;margin-top:8px;font-size:10px;color:#bbb;}
+.volume-container{display:flex;justify-content:center;align-items:center;margin-top:8px;font-size:0.7rem;color:#bbb;}
 .volume-container input[type=range]{-webkit-appearance:none;width:120px;height:6px;background:#111;border-radius:4px;margin-left:8px;cursor:pointer;}
 .volume-container input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;background:var(--accent);border-radius:50%;cursor:pointer;}
 @keyframes moveLeft{0%{left:100%;}100%{left:-30px;}}
@@ -230,7 +234,9 @@ function phase1Completed(){
 // -------- Fase 2 --------
 function startPhase2(){
   currentPhase=2;
-  gameStage.innerHTML=''; character.style.left='40px'; character.style.bottom='40px'; gameStage.appendChild(character);
+  const elementsToRemove = Array.from(gameStage.children).filter(el => el !== character && el !== transition);
+  elementsToRemove.forEach(el => el.remove());
+  character.style.left='40px'; character.style.bottom='40px';
   doors=[];
   createDoors();
   gameInterval=setInterval(phase2Loop,20);
@@ -268,7 +274,9 @@ function phase2Loop(){
 // -------- Fase 3 --------
 function startPhase3(){
   currentPhase=3;
-  gameStage.innerHTML=''; character.style.left='40px'; character.style.bottom='40px'; gameStage.appendChild(character);
+  const elementsToRemove = Array.from(gameStage.children).filter(el => el !== character && el !== transition);
+  elementsToRemove.forEach(el => el.remove());
+  character.style.left='40px'; character.style.bottom='40px';
   spawnTicket();
   gameInterval=setInterval(phase3Loop,20);
 }
@@ -281,6 +289,7 @@ function spawnTicket(){
   ticket.style.width='32px';
   ticket.style.height='32px';
   ticket.style.backgroundImage='url(https://cdn-icons-png.flaticon.com/512/3112/3112946.png)';
+  ticket.style.backgroundSize='cover';
   gameStage.appendChild(ticket);
   items=[ticket];
 }
@@ -313,10 +322,24 @@ function endGame(){
 
 function acceptInvite(){alert("Convite aceito! 💛");}
 function restartGame(){finalCard.style.display='none';startGame();}
-function restartPhase1(){clearInterval(gameInterval);clearInterval(obstacleInterval);startPhase1();}
+
+// -------- Restart Fase 1 robusto --------
+function restartPhase1(){
+  clearInterval(gameInterval);
+  clearInterval(obstacleInterval);
+
+  obstacles.forEach(o => o.remove());
+  items.forEach(i => i.remove());
+  obstacles = [];
+  items = [];
+
+  score = 0;
+  charBottom = 40;
+  character.style.bottom = charBottom + 'px';
+  character.style.left = '40px';
+
+  startPhase1();
+}
 </script>
 </body>
 </html>
-
-
-
